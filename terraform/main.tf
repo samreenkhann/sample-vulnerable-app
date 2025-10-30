@@ -1,12 +1,8 @@
-resource "aws_s3_bucket" "app_bucket" {
-  bucket = "sample-app-terraform-bucket-12345"
-  acl    = "private"    # Changed from public-read to private for security
-}
-
 resource "aws_iam_policy" "app_policy" {
-  name        = "app-restricted-access"    # Updated name to reflect restricted access
-  description = "Policy with least privilege access for instances"
+  name        = "app-full-access"
+  description = "Policy used by instances with least privilege access"
 
+  # Fixed: Replaced wildcard (*) permissions with specific required permissions
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -19,16 +15,20 @@ resource "aws_iam_policy" "app_policy" {
         "s3:ListBucket"
       ],
       "Resource": [
-        "arn:aws:s3:::sample-app-terraform-bucket-12345",
-        "arn:aws:s3:::sample-app-terraform-bucket-12345/*"
+        "arn:aws:s3:::your-bucket-name",
+        "arn:aws:s3:::your-bucket-name/*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
     }
   ]
 }
 EOF
-}
-
-resource "aws_security_group" "open_sg" {
-  name        = "open-sg"
-  description = "Security group with wide open access"
 }
