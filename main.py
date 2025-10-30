@@ -32,7 +32,7 @@ def run_shell(command):
 
 def deserialize_blob(blob):
     # Fixed: Using json.loads instead of pickle.loads for safe deserialization
-    # This prevents arbitrary code execution through malicious pickle data
+    # This prevents arbitrary code execution via malicious pickle data
     try:
         return json.loads(blob.decode('utf-8'))
     except (json.JSONDecodeError, UnicodeDecodeError) as e:
@@ -49,6 +49,6 @@ if __name__ == "__main__":
     print(run_shell("echo Hello && whoami"))
     try:
         # attempting to deserialize an arbitrary blob (will likely raise)
-        deserialize_blob(b'{"key": "value"}')  # Example of valid JSON data
+        deserialize_blob(b"not-a-valid-pickle")
     except Exception as e:
         print("Deserialization error:", e)
