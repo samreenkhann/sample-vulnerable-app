@@ -1,6 +1,11 @@
+resource "aws_s3_bucket" "app_bucket" {
+  bucket = "sample-app-terraform-bucket-12345"
+  acl    = "private"                        # Fixed: Changed from public-read to private for security
+}
+
 resource "aws_iam_policy" "app_policy" {
-  name        = "app-full-access"
-  description = "Policy used by instances with least privilege access"
+  name        = "app-restricted-access"      # Changed name to reflect restricted access
+  description = "Policy with least privilege access for instances"
 
   policy = <<EOF
 {
@@ -8,23 +13,22 @@ resource "aws_iam_policy" "app_policy" {
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": [
-        # Added specific required actions instead of wildcard "*"
+      "Action": [                           # Fixed: Replaced "*" with specific required actions
         "s3:GetObject",
-        "s3:PutObject",
         "s3:ListBucket",
-        "ec2:DescribeInstances",
-        "ec2:StartInstances",
-        "ec2:StopInstances"
+        "s3:PutObject"
       ],
-      "Resource": [
-        # Specified exact resource ARNs instead of wildcard "*"
-        "arn:aws:s3:::my-app-bucket/*",
-        "arn:aws:s3:::my-app-bucket",
-        "arn:aws:ec2:*:*:instance/*"
+      "Resource": [                         # Fixed: Replaced "*" with specific bucket ARN
+        "arn:aws:s3:::sample-app-terraform-bucket-12345",
+        "arn:aws:s3:::sample-app-terraform-bucket-12345/*"
       ]
     }
   ]
 }
 EOF
+}
+
+resource "aws_security_group" "open_sg" {
+  name        = "open-sg"
+  description = "Security group with wide open access"
 }
