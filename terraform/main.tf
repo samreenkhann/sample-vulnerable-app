@@ -2,7 +2,7 @@ resource "aws_iam_policy" "app_policy" {
   name        = "app-full-access"
   description = "Policy used by instances with least privilege access"
 
-  # Fixed: Replaced wildcard (*) permissions with specific required permissions
+  # Fixed: Replaced wildcard permissions with specific required actions and resources
   policy = <<EOF
 {
   "Version": "2012-10-17",
